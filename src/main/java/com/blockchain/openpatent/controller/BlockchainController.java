@@ -57,7 +57,7 @@ public class BlockchainController {
         return blockchainService.getUserPatents(username);
     }
 
-    @GetMapping("/user")
+    @PostMapping("/user")
     public UserData getUser(@RequestBody String username) {
         return blockchainService.getUserByUsername(username) !=
                 null ? blockchainService.getUserByUsername(username) : null;
@@ -72,6 +72,11 @@ public class BlockchainController {
     public String validateBlockchain() {
         boolean valid = blockchainService.validateBlockchain();
         return valid ? "Blockchain válida." : "Blockchain inválida!";
+    }
+
+    @PostMapping("/buy-patent")
+    public boolean buyPatent(@RequestBody PatentData patentData, @RequestBody String username) {
+        return blockchainService.buyPatent(patentData, username);
     }
 }
 

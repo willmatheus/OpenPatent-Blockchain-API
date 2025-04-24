@@ -8,86 +8,53 @@ public class UserData {
     private String name;
     private String username;
     private String cpf;
-    private String hashedPassword;
-    private final List<PatentData> userPatents;
+    private String password;
+    private List<PatentData> userPatents = new ArrayList<>();
     private double wallet = 300;
+
+    public UserData() {}
 
     public UserData(String name, String username, String cpf, String hashedPassword) {
         this.name = name;
         this.username = username;
         this.cpf = cpf;
-        this.hashedPassword = hashedPassword;
-        userPatents = new ArrayList<>();
+        this.password = hashedPassword;
     }
 
-    @Override
-    public String toString() {
-        return name + username + cpf + hashedPassword;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getHashedPassword() { return password; }
+    public void setHashedPassword(String hashedPassword) { this.password = hashedPassword; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
-    }
+    public List<PatentData> getUserPatents() { return userPatents; }
+    public void setUserPatents(List<PatentData> userPatents) { this.userPatents = userPatents; }
 
     public void addUserPatent(PatentData patent) {
         userPatents.add(patent);
-    }
-
-    public List<PatentData> getUserPatents() {
-        return userPatents;
     }
 
     public void removeUserPatent(PatentData patent) {
         userPatents.remove(patent);
     }
 
-    public void setWallet(double coins) {
-        this.wallet += coins;
-    }
+    public double getWallet() { return wallet; }
+    public void setWallet(double wallet) { this.wallet = wallet; }
 
-    public double getWallet() {
-        return wallet;
-    }
-
-    // Novo método: compara uma senha em texto puro com a senha hash armazenada
     public boolean checkPassword(String plainPassword) {
-        return hashedPassword.equals(hashPassword(plainPassword));
+        return password.equals(hashPassword(plainPassword));
     }
 
-    // Novo método: retorna a senha com hash (por compatibilidade)
     public String getPassword() {
-        return hashedPassword;
+        return password;
     }
 
-    // Método utilitário para aplicar SHA-256
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -99,5 +66,10 @@ public class UserData {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao aplicar hash na senha", e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return name + "|" + username + "|" + cpf + "|" + password;
     }
 }

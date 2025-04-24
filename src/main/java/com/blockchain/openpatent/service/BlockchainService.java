@@ -4,8 +4,6 @@ import model.Block;
 import model.Blockchain;
 import model.PatentData;
 import model.UserData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,7 +12,6 @@ import java.util.*;
 public class BlockchainService {
 
     private final Blockchain blockchain = new Blockchain();
-    private static final Logger logger = LoggerFactory.getLogger(BlockchainService.class);
 
     public void registerUser(UserData user) {
         blockchain.addBlock(user);
@@ -60,6 +57,7 @@ public class BlockchainService {
                 patents.add((PatentData) block.getData());
             }
         }
+        System.out.println(patents);
         return patents;
     }
 
