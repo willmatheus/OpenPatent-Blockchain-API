@@ -4,6 +4,7 @@ import com.blockchain.openpatent.service.BlockchainService;
 import model.Block;
 import model.PatentData;
 import model.UserData;
+import model.data.BuyPatent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,8 +76,8 @@ public class BlockchainController {
     }
 
     @PostMapping("/buy-patent")
-    public boolean buyPatent(@RequestBody PatentData patentData, @RequestBody String username) {
-        return blockchainService.buyPatent(patentData, username);
+    public ResponseEntity<Boolean> buyPatent(@RequestBody BuyPatent patentData) {
+        return ResponseEntity.ok(blockchainService.buyPatent(patentData));
     }
 }
 

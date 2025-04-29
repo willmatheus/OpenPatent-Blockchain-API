@@ -4,8 +4,11 @@ import model.Block;
 import model.Blockchain;
 import model.PatentData;
 import model.UserData;
+import model.data.BuyPatent;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -18,27 +21,60 @@ public class BlockchainService {
     }
 
     public void registerPatent(PatentData patentData) {
+
+        if (patentData.getRegistrationDate() == null || patentData.getRegistrationDate().isEmpty()) {
+            patentData.setRegistrationDate(generateCurrentDate());
+        }
+
         blockchain.addBlock(patentData);
+
         UserData user = getUserByUsername(patentData.getInventor());
-        user.addUserPatent(patentData);
+        if (user != null) {
+            user.addUserPatent(patentData);
+            blockchain.addBlock(user);
+        }
     }
 
-    public boolean buyPatent(PatentData patentData, String username) {
-        UserData userBuyer = getUserByUsername(username);
+    private String generateCurrentDate() {
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return dateTime.format(formatter);
+    }
 
-        if (userBuyer.getWallet() >= patentData.getPrice()) {
-            UserData userSeller = getUserByUsername(patentData.getInventor());
-
-            userBuyer.setWallet(-patentData.getPrice());
-            userSeller.setWallet(patentData.getPrice());
-
-            userBuyer.getUserPatents().add(patentData);
-            userSeller.getUserPatents().remove(patentData);
-
-            return true;
-        } else {
+    public boolean buyPatent(BuyPatent data) {
+        PatentData patentData = getPatentByTitle(data.patent().getTitle());
+        if (patentData == null) {
             return false;
         }
+
+        UserData buyer = getUserByUsername(data.username());
+        UserData seller = getUserByUsername(patentData.getInventor());
+
+        if (buyer == null || seller == null) {
+            return false;
+        }
+
+        if (buyer.getUsername().equals(seller.getUsername())) {
+            return false;
+        }
+
+        if (buyer.getWallet() < patentData.getPrice()) {
+            return false;
+        }
+
+        buyer.setWallet(buyer.getWallet() - patentData.getPrice());
+        seller.setWallet(seller.getWallet() + patentData.getPrice());
+
+        patentData.setInventor(buyer.getUsername());
+
+        seller.removeUserPatent(patentData); // remove do vendedor
+        buyer.addUserPatent(patentData);     // adiciona ao comprador
+
+        blockchain.addBlock(patentData);
+        blockchain.addBlock(seller);     // atualiza o vendedor no blockchain
+        blockchain.addBlock(buyer);      // atualiza o comprador no blockchain
+
+        return true;
     }
 
     public boolean validateBlockchain() {
@@ -46,39 +82,51 @@ public class BlockchainService {
     }
 
     public List<PatentData> getUserPatents(String username) {
-        System.out.println("getAllUsers(): " + getAllUsers());
-        return getUserByUsername(username).getUserPatents();
+        UserData user = getUserByUsername(username);
+        return user != null ? user.getUserPatents() : new ArrayList<>();
     }
 
     public List<PatentData> getAllPatents() {
-        List<PatentData> patents = new ArrayList<>();
+        Map<String, PatentData> latestPatents = new LinkedHashMap<>();
+
         for (Block block : blockchain.getChain()) {
             if (block.getData() instanceof PatentData) {
-                patents.add((PatentData) block.getData());
+                PatentData patent = (PatentData) block.getData();
+                // Sempre sobrescreve com a versão mais recente encontrada na cadeia
+                latestPatents.put(patent.getTitle(), patent);
             }
         }
-        System.out.println(patents);
-        return patents;
+
+        return new ArrayList<>(latestPatents.values());
+    }
+
+    public PatentData getPatentByTitle(String title) {
+        for (PatentData patent : getAllPatents()) {
+            System.out.println(patent.getTitle());
+            System.out.println(title);
+            if (patent.getTitle().equals(title.replace("\"", ""))) {
+                return patent;
+            }
+        }
+        return null;
     }
 
     public List<UserData> getAllUsers() {
-        List<UserData> users = new ArrayList<>();
+        Map<String, UserData> latestUsers = new HashMap<>();
         for (Block block : blockchain.getChain()) {
             if (block.getData() instanceof UserData) {
-                users.add((UserData) block.getData());
+                UserData user = (UserData) block.getData();
+                latestUsers.put(user.getUsername(), user); // sobrescreve com a versão mais recente
             }
         }
-        return users;
+        return new ArrayList<>(latestUsers.values());
     }
 
     public UserData getUserByUsername(String username) {
-        List<UserData> allUsers = getAllUsers();
-        for (UserData user : allUsers) {
+        for (UserData user : getAllUsers()) {
             if (user.getUsername().equals(username.replace("\"", ""))) {
                 return user;
             }
-            System.out.println(user.getUsername());
-            System.out.println(username);
         }
         return null;
     }

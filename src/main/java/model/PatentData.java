@@ -1,20 +1,33 @@
 package model;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class PatentData {
     private String inventor;
     private String title;
     private String description;
     private double price;
+    private String registrationDate;
 
     public PatentData() {}
 
-    public PatentData(String inventor, String title, String description, double price) {
+    public PatentData(String inventor, String title, String description, double price, String registrationDate) {
         this.inventor = inventor;
         this.title = title;
         this.description = description;
         this.price = price;
+        this.registrationDate = registrationDate;
+    }
+
+    public String getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(String registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
     public String getInventor() { return inventor; }
