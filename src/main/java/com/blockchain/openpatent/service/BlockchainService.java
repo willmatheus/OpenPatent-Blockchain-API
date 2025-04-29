@@ -65,10 +65,9 @@ public class BlockchainService {
         buyer.setWallet(buyer.getWallet() - patentData.getPrice());
         seller.setWallet(seller.getWallet() + patentData.getPrice());
 
-        patentData.setInventor(buyer.getUsername());
-
-        seller.removeUserPatent(patentData); // remove do vendedor
-        buyer.addUserPatent(patentData);     // adiciona ao comprador
+        seller.removeUserPatent(patentData); // remova antes de alterar
+        patentData.setInventor(buyer.getUsername()); // altera depois
+        buyer.addUserPatent(patentData);
 
         blockchain.addBlock(patentData);
         blockchain.addBlock(seller);     // atualiza o vendedor no blockchain

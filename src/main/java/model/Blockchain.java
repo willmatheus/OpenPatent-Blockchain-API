@@ -30,7 +30,7 @@ public class Blockchain {
             // Criação do bloco gênesis
             Block genesis = new Block(0,
                     new PatentData("Genesis", "OpenPatent", "Aplicativo de patentes", 99999999, generateCurrentDate()),
-                    "0");
+                   "0");
             chain.add(genesis);
             saveBlockToFile(genesis);
         }
