@@ -7,7 +7,9 @@ import model.data.BuyPatent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +61,8 @@ public class BlockchainController {
 
     @PostMapping("/user")
     public UserData getUser(@RequestBody String username) {
-        return blockchainService.getUserByUsername(username) !=
-                null ? blockchainService.getUserByUsername(username) : null;
+        return blockchainService.getUserByUsername(username) != null
+                ? blockchainService.getUserByUsername(username) : null;
     }
 
     @GetMapping("/patents")
@@ -72,5 +74,19 @@ public class BlockchainController {
     public ResponseEntity<Boolean> buyPatent(@RequestBody BuyPatent patentData) {
         return ResponseEntity.ok(blockchainService.buyPatent(patentData));
     }
-}
 
+    // NOVO ENDPOINT PARA TESTAR CONEXÃO COM A INFURA
+    @GetMapping("/test-connection")
+    public ResponseEntity<String> testConnection() {
+        try {
+            Web3ClientVersion clientVersion = blockchainService.getClientVersion();
+            if (!clientVersion.hasError()) {
+                return ResponseEntity.ok("Conexão bem-sucedida com: " + clientVersion.getWeb3ClientVersion());
+            } else {
+                return ResponseEntity.status(500).body("Erro: " + clientVersion.getError().getMessage());
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Exceção: " + e.getMessage());
+        }
+    }
+}
