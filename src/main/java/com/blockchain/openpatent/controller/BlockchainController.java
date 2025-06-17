@@ -1,9 +1,11 @@
 package com.blockchain.openpatent.controller;
 
 import com.blockchain.openpatent.service.BlockchainService;
-import model.PatentData;
-import model.UserData;
-import model.data.BuyPatent;
+import com.blockchain.openpatent.model.PatentData;
+import com.blockchain.openpatent.model.UserData;
+import com.blockchain.openpatent.model.data.BuyPatent;
+import com.blockchain.openpatent.service.PatentService;
+import com.blockchain.openpatent.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,14 @@ public class BlockchainController {
 
     @Autowired
     private BlockchainService blockchainService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PatentService patentService;
 
     @PostMapping("/register-user")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserData user) {
-        blockchainService.registerUser(user);
+        userService.registerUser(user);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -45,7 +51,7 @@ public class BlockchainController {
 
     @PostMapping("/register-patent")
     public String registerPatent(@RequestBody PatentData patentData) {
-        blockchainService.registerPatent(patentData);
+        patentService.createPatent(patentData);
         return "Patente registrada com sucesso!";
     }
 
@@ -67,7 +73,7 @@ public class BlockchainController {
 
     @GetMapping("/patents")
     public List<PatentData> getAllPatents() {
-        return blockchainService.getAllPatents();
+        return patentService.getAllPatents();
     }
 
     @PostMapping("/buy-patent")

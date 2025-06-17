@@ -1,8 +1,8 @@
 package com.blockchain.openpatent.service;
 
-import model.PatentData;
-import model.UserData;
-import model.data.BuyPatent;
+import com.blockchain.openpatent.model.PatentData;
+import com.blockchain.openpatent.model.UserData;
+import com.blockchain.openpatent.model.data.BuyPatent;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;

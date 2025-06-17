@@ -1,16 +1,24 @@
-package model;
+package com.blockchain.openpatent.model;
+
+import jakarta.persistence.*;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class UserData {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String name;
     private String username;
     private String cpf;
     private String password;
-    private List<PatentData> userPatents = new ArrayList<>();
     private double wallet = 300;
+
+    @OneToMany(mappedBy = "userData", cascade = CascadeType.ALL)
+    private List<PatentData> userPatents = new ArrayList<>();
 
     public UserData() {}
 
