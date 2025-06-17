@@ -49,6 +49,27 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+
+		<!-- Web3j: biblioteca principal para Ethereum -->
+		<dependency>
+			<groupId>org.web3j</groupId>
+			<artifactId>core</artifactId>
+			<version>4.10.3</version>
+		</dependency>
+
+		<!-- Opcional: logging SLF4J -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.30</version>
+		</dependency>
+
+		<!-- Opcional: para trabalhar com arquivos gerados via web3j -->
+		<dependency>
+			<groupId>org.web3j</groupId>
+			<artifactId>codegen</artifactId>
+			<version>4.10.3</version>
+		</dependency>
     </dependencies>
 
 	<build>

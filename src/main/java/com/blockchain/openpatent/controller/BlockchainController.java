@@ -1,7 +1,6 @@
 package com.blockchain.openpatent.controller;
 
 import com.blockchain.openpatent.service.BlockchainService;
-import model.Block;
 import model.PatentData;
 import model.UserData;
 import model.data.BuyPatent;
@@ -67,12 +66,6 @@ public class BlockchainController {
     @GetMapping("/patents")
     public List<PatentData> getAllPatents() {
         return blockchainService.getAllPatents();
-    }
-
-    @GetMapping("/validate")
-    public String validateBlockchain() {
-        boolean valid = blockchainService.validateBlockchain();
-        return valid ? "Blockchain válida." : "Blockchain inválida!";
     }
 
     @PostMapping("/buy-patent")
